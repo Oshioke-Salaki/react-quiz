@@ -29,11 +29,6 @@ type State = {
   secondsRemaining: number;
 };
 
-type Action = {
-  type: string;
-  payload?: { question: question[]; answer?: number };
-};
-
 const initialState: State = {
   questions: [],
   // "loading", "error", "ready", "active", "finished"
@@ -43,6 +38,11 @@ const initialState: State = {
   points: 0,
   highscore: 0,
   secondsRemaining: 0,
+};
+
+type Action = {
+  type: string;
+  payload?: { question: question[]; answer?: number };
 };
 
 function reducer(state: State, action: Action): State {
@@ -62,7 +62,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         status: 'active',
-        secondsRemaining: state.questions.length * 30,
+        secondsRemaining: state.questions?.length * 30,
       };
     case 'newAnswer':
       // eslint-disable-next-line no-case-declarations
@@ -113,7 +113,7 @@ function App() {
     dispatch,
   ] = useReducer(reducer, initialState);
 
-  const maxPoints: number = questions.reduce(
+  const maxPoints: number = questions?.reduce(
     (acc: number, curr: question) => acc + curr.points,
     0
   );
@@ -121,7 +121,9 @@ function App() {
   useEffect(function () {
     fetch('http://localhost:3000/questions')
       .then((res) => res.json())
-      .then((data) => dispatch({ type: 'dataReceived', payload: data }))
+      .then((data) =>
+        dispatch({ type: 'dataReceived', payload: { question: data } })
+      )
       .catch(() => dispatch({ type: 'dataFailed' }));
   }, []);
 
@@ -133,20 +135,20 @@ function App() {
           {status === 'loading' && <Loader />}
           {status === 'error' && <ErrorComp />}
           {status === 'ready' && (
-            <StartScreen dispatch={dispatch} length={questions!.length} />
+            <StartScreen dispatch={dispatch} length={questions?.length} />
           )}
           {status === 'active' && (
             <>
               <Progress
                 index={index}
-                numQuestions={questions.length}
+                numQuestions={questions?.length}
                 points={points}
                 maxPoints={maxPoints}
                 answer={answer}
               />
               <Question
                 dispatch={dispatch}
-                curQuestion={questions![index]}
+                curQuestion={questions ? questions[index] : undefined}
                 answer={answer}
               />
               <Footer>
@@ -157,7 +159,7 @@ function App() {
                 <NextButton
                   dispatch={dispatch}
                   answer={answer}
-                  numQuestions={questions.length}
+                  numQuestions={questions?.length}
                   index={index}
                 />
               </Footer>
