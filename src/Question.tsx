@@ -1,21 +1,14 @@
 import Options from './Options';
+import { useQuiz } from './context/QuizContext';
 
-const Question: React.FC<{
-  dispatch: (action: { type: string }) => void;
-  curQuestion:
-    | {
-        question: string;
-        options: string[];
-        correctOption: number;
-        points: number;
-      }
-    | undefined;
-  answer: number | undefined;
-}> = ({ curQuestion, answer, dispatch }) => {
+const Question: React.FC = () => {
+  const { questions, index } = useQuiz();
+
+  const question = questions.at(index);
   return (
     <div>
-      <h4>{curQuestion?.question}</h4>
-      <Options dispatch={dispatch} answer={answer} curQuestion={curQuestion} />
+      <h4>{question.question}</h4>
+      <Options question={question} />
     </div>
   );
 };

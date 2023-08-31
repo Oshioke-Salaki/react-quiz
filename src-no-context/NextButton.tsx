@@ -1,8 +1,11 @@
 import React from 'react';
-import { useQuiz } from './context/QuizContext';
 
-const NextButton: React.FC = () => {
-  const { dispatch, answer, index, numQuestions } = useQuiz();
+const NextButton: React.FC<{
+  dispatch: (action: { type: string }) => void;
+  answer: number | undefined;
+  index: number;
+  numQuestions: number;
+}> = ({ dispatch, answer, index, numQuestions }) => {
   if (answer === undefined) return null;
   if (index < numQuestions - 1)
     return (

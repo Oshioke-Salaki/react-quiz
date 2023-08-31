@@ -1,8 +1,11 @@
 import React from 'react';
-import { useQuiz } from './context/QuizContext';
 
-const FinishedScreen: React.FC = () => {
-  const { points, maxPoints, highscore, dispatch } = useQuiz();
+const FinishedScreen: React.FC<{
+  dispatch: (action: { type: string }) => void;
+  points: number;
+  maxPoints: number;
+  highscore: number;
+}> = ({ points, maxPoints, highscore, dispatch }) => {
   const percentage: number = (points / maxPoints) * 100;
   let emoji: string = '';
   if (percentage === 100) emoji = '🥇';
